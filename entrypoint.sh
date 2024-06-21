@@ -14,3 +14,5 @@ elif [ "$SPARK_WORKLOAD" == "history" ]
 then
   start-history-server.sh
 fi
+
+### e para diferenciar cada container 

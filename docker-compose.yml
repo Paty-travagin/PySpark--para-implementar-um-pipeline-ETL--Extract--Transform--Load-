@@ -1,32 +1,35 @@
 version: '3.8'
 name: dsa-pyspark-cluster
+# nome do meu cluster
 
 services:
+  # meus serviços meu cluster master
   spark-master:
     container_name: dsa-pyspark-master
-    build: .
+    build: . # diretorio corrente onde esta o dckerfile
     image: dsa-pyspark-image
     entrypoint: ['./entrypoint.sh', 'master']
-    healthcheck:
+    healthcheck: # testar a conexão
       test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
       interval: 5s
       timeout: 3s
       retries: 3
-    volumes:
+    volumes: # toda vez que eu colocar arquivos na minha pasta local automaticamente vai carregar no docker
       - ./dados:/opt/spark/data
       - ./jobs:/opt/spark/apps
       - spark-logs:/opt/spark/spark-events
-    env_file:
+    env_file: # arquivo de configuração: evitar problemas na hora de inicializar os serviços do spark
       - .env.spark
     ports:
-      - '9091:8080'
+      - '9091:8080' # lado direito porta dentro do container do lado esquerdo porta da minha maquina local
       - '7071:7077'
 
   spark-history-server:
+    # servidor spark para manter o historico de execução dos jobs
     container_name: dsa-pyspark-history
     image: dsa-pyspark-image
-    entrypoint: ['./entrypoint.sh', 'history']
-    depends_on:
+    entrypoint: ['./entrypoint.sh', 'history'] # entrypoint é para seguimentar o tipo de serviço
+    depends_on: # depende do serviço anterior 
       - spark-master
     env_file:
       - .env.spark
@@ -36,6 +39,7 @@ services:
       - '18081:18080'
 
   spark-worker:
+    # para work não preciso de definir a quant, pois o n° é dinamico eu difino a quantidade quando vou criar o cluster no comando docker
     image: dsa-pyspark-image
     entrypoint: ['./entrypoint.sh', 'worker']
     depends_on:

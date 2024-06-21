@@ -2,7 +2,7 @@
 
 # Imagem do SO usada como base
 FROM python:3.11-bullseye as spark-base
-
+# openjdk-11-jdk \    é o requerimento para instalar o apack spark
 # Atualiza o SO e instala pacotes
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -12,7 +12,7 @@ RUN apt-get update && \
       nano \
       unzip \
       rsync \
-      openjdk-11-jdk \
+      openjdk-11-jdk \ 
       build-essential \
       software-properties-common \
       ssh && \
